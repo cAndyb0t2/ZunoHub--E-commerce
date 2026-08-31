@@ -1,6 +1,6 @@
 import { Heart, ShoppingBag } from "lucide-react";
 import { Link } from "wouter";
-import { ProductCard } from "@/components/dmart/ProductCard";
+import { ProductCard } from "@/components/zunoApp/ProductCard";
 import { useStore } from "@/contexts/StoreContext";
 
 export default function Wishlist() {

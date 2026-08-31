@@ -1,6 +1,6 @@
 import { asc, eq, sql } from "drizzle-orm";
 import { products, type Product as ProductRow } from "../../drizzle/schema";
-import type { ProductView } from "../../shared/dmart";
+import type { ProductView } from "../../shared/zunoApp";
 import { getDb } from "../db";
 
 const imageMap: Record<string, string> = {
@@ -114,16 +114,20 @@ export async function ensureCatalogSeeded() {
   }
 }
 
-export async function listCatalog(options?: { category?: string; search?: string }) {
+export async function listCatalog(options?: { category?: string; search?: string; priceMin?: number; priceMax?: number }) {
   await ensureCatalogSeeded();
   const db = await getDb();
   if (!db) return [];
   const rows = await db.select().from(products).where(eq(products.active, true)).orderBy(asc(products.name));
   const category = options?.category?.trim().toLowerCase();
   const search = options?.search?.trim().toLowerCase();
+  const priceMin = options?.priceMin;
+  const priceMax = options?.priceMax;
   return rows
     .filter(row => !category || category === "all" || row.category.toLowerCase() === category)
     .filter(row => !search || `${row.name} ${row.category} ${row.description} ${row.brand}`.toLowerCase().includes(search))
+    .filter(row => priceMin === undefined || row.priceInPaise >= priceMin * 100)
+    .filter(row => priceMax === undefined || row.priceInPaise <= priceMax * 100)
     .map(normalizeProduct);
 }
 

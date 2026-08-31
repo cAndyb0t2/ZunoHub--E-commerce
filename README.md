@@ -7,17 +7,17 @@ This project is the attached storefront upgraded into ZunoHub with a simple cust
 | Area | Location | Responsibility |
 |---|---|---|
 | Frontend | `client/src/` | Pages, components, styles, browser cart context, and customer interactions |
-| Backend procedures | `server/dmart/` | Catalog, cart, checkout, order, inventory, and fulfilment business logic |
-| Backend entrypoint | `server/routers.ts` | Mounts the custom commerce router under the internal `dmart` namespace |
+| Backend procedures | `server/zunoApp/` | Catalog, cart, checkout, order, inventory, and fulfilment business logic |
+| Backend entrypoint | `server/routers.ts` | Mounts the custom commerce router under the internal `zunoApp` namespace |
 | Database schema | `drizzle/schema.ts` | Users, products, carts, cart lines, orders, and order lines |
-| Shared contract | `shared/dmart.ts` | Typed shapes exchanged between the server procedures and frontend |
+| Shared contract | `shared/zunoApp.ts` | Typed shapes exchanged between the server procedures and frontend |
 | Database migration | `drizzle/0001_boring_sunset_bain.sql` | Creates the commerce tables |
 
-The frontend never queries the database directly. It calls typed procedures such as `dmart.catalog.list`, `dmart.cart.addItem`, and `dmart.checkout.place`. The backend is kept separate from the UI so catalog and fulfilment changes do not require editing page components.
+The frontend never queries the database directly. It calls typed procedures such as `zunoApp.catalog.list`, `zunoApp.cart.addItem`, and `zunoApp.checkout.place`. The backend is kept separate from the UI so catalog and fulfilment changes do not require editing page components.
 
 ## How everything works
 
-A customer opens the React frontend in `client/src/`. The header and page components ask the typed tRPC client for catalogue data. The request reaches `server/routers.ts`, which forwards it to the focused modules in `server/dmart/`. Those modules read or update the MySQL-compatible database through Drizzle and return small ZunoHub-specific objects defined in `shared/dmart.ts`. This keeps database column names and business rules out of the browser.
+A customer opens the React frontend in `client/src/`. The header and page components ask the typed tRPC client for catalogue data. The request reaches `server/routers.ts`, which forwards it to the focused modules in `server/zunoApp/`. Those modules read or update the MySQL-compatible database through Drizzle and return small ZunoHub-specific objects defined in `shared/zunoApp.ts`. This keeps database column names and business rules out of the browser.
 
 The catalog is seeded from the attached product baseline the first time the product table is empty. After that, the database is the source of truth. Product cards use the product slug for detail navigation and show the live price, discount, stock count, and availability. Search and category filtering are handled by the catalog procedure, so the UI does not need a second copy of the product list.
 
@@ -31,12 +31,12 @@ The complete request flow is:
 
 | Step | What happens |
 |---|---|
-| Browse | Frontend calls `dmart.catalog.list`; backend reads active products from the database. |
+| Browse | Frontend calls `zunoApp.catalog.list`; backend reads active products from the database. |
 | Add to bag | Frontend sends a product ID; backend creates or updates the persisted cart and enforces stock. |
 | Review bag | Frontend displays the backend-calculated totals returned for the cart ID. |
 | Place order | Backend validates details, rechecks stock, decrements inventory, writes order and order lines, and closes the cart in one transaction. |
 | Fulfilment | Admin changes the order from confirmed to packed, out for delivery, delivered, or cancelled. |
-| History | Signed-in customers call `dmart.orders.mine` to see their own persisted order snapshots. |
+| History | Signed-in customers call `zunoApp.orders.mine` to see their own persisted order snapshots. |
 
 ## Run locally
 
@@ -87,10 +87,22 @@ The customer-facing routes and sign-in dialog contain no visible Manus watermark
 
 ## ZunoHub enhancements
 
-Product pages include a pin-code checker backed by `dmart.delivery.estimate`. Enter a six-digit Indian pin code to receive a planning window calculated in business days. The response explicitly reports invalid or currently unsupported pin codes; it is an estimate, not a courier guarantee.
+Product pages include a pin-code checker backed by `zunoApp.delivery.estimate`. Enter a six-digit Indian pin code to receive a planning window calculated in business days. The response explicitly reports invalid or currently unsupported pin codes; it is an estimate, not a courier guarantee.
 
 The header bag icon opens a slide-out panel on every storefront route. It reads the same server-calculated cart object as `/cart`, so quantity changes update stock limits, subtotal, delivery fee, savings, and total in the panel and full cart together. The browser never calculates the final payable amount itself.
 
 The checkout payment step has two testing-only methods: mock UPI and mock card. UPI accepts `demo@zunobank`; card accepts `4242 4242 4242 4242`, `12/30`, and `123`. The backend validates those shapes and returns a simulated `ZUNO-UPI-...` or `ZUNO-CARD-...` transaction ID. No payment is captured and no card data is persisted. Cash on delivery remains available as the non-simulated option.
 
-The customer-facing name is now ZunoHub, including the browser title, logo text, authentication copy, catalogue copy, order history, operations heading, seeded product brand, and confirmation copy. Internal folders and tRPC namespaces retain compatibility-oriented names such as `server/dmart/` and `dmart.catalog`; these are implementation identifiers, not visible storefront branding.
+The customer-facing name is now ZunoHub, including the browser title, logo text, authentication copy, catalogue copy, order history, operations heading, seeded product brand, and confirmation copy. The implementation folders and tRPC namespace use `zunoApp`; only the legacy `DMART10` coupon and old browser storage keys remain accepted for backward compatibility.
+
+## Latest ZunoHub refinements
+
+The `/orders` page now serves as a private order history, with each purchase showing its fulfilment timeline and a link to `/orders/:orderNumber`. The tracking view loads the order by number through a protected backend procedure, so a signed-in customer can see only their own order, its current status, delivery address, payment summary, and item-level totals.
+
+The header search now provides deferred product auto-suggestions after two characters. The catalogue search is URL-backed and supports category links plus price ranges: under ₹100, ₹100–₹300, ₹300–₹500, and ₹500 or more. Filter selections can be shared or refreshed without losing the current result state.
+
+The visual theme uses a richer emerald primary, deep teal text, pale mint surfaces, warm citrus accents, and a softer border system. Focus rings, button contrast, touch targets, and responsive stacking are retained while the palette adds more separation between navigation, content, discounts, delivery details, and status badges.
+
+The project-controlled feature folders are now named `client/src/components/zunoApp/`, `server/zunoApp/`, and `shared/zunoApp.ts`. The managed project root remains unchanged because it is controlled by the hosting workspace. Existing shoppers’ old `dmart-cart-id` and `dmart-wishlist` browser keys are read once as backward-compatible fallbacks, while new state is stored under `zunoApp` keys.
+
+The reusable agent workflow is packaged separately at `/home/ubuntu/skills/zunohub-ecommerce-workflow/SKILL.md` and has passed the skill structure validator.

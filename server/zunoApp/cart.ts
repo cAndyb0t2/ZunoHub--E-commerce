@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { carts, cartItems, products } from "../../drizzle/schema";
-import type { CartView } from "../../shared/dmart";
+import type { CartView } from "../../shared/zunoApp";
 import { getDb } from "../db";
 import { ensureCatalogSeeded } from "./catalog";
 

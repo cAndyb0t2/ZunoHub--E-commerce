@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import type { CartView, ProductView } from "@shared/dmart";
+import type { CartView, ProductView } from "@shared/zunoApp";
 import { trpc } from "@/lib/trpc";
 
 type StoreContextValue = {
@@ -18,11 +18,15 @@ type StoreContextValue = {
 };
 
 const StoreContext = createContext<StoreContextValue | null>(null);
+const CART_STORAGE_KEY = "zunoApp-cart-id";
+const LEGACY_CART_STORAGE_KEY = "dmart-cart-id";
+const WISHLIST_STORAGE_KEY = "zunoApp-wishlist";
+const LEGACY_WISHLIST_STORAGE_KEY = "dmart-wishlist";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [cartId, setCartId] = useState<string | null>(() => {
     try {
-      return localStorage.getItem("dmart-cart-id");
+      return localStorage.getItem(CART_STORAGE_KEY) ?? localStorage.getItem(LEGACY_CART_STORAGE_KEY);
     } catch {
       return null;
     }
@@ -30,23 +34,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartView | null>(null);
   const [wishlist, setWishlist] = useState<ProductView[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem("dmart-wishlist") ?? "[]") as ProductView[];
+      return JSON.parse(localStorage.getItem(WISHLIST_STORAGE_KEY) ?? localStorage.getItem(LEGACY_WISHLIST_STORAGE_KEY) ?? "[]") as ProductView[];
     } catch {
       return [];
     }
   });
   const cartInput = useMemo(() => (cartId ? { cartId } : undefined), [cartId]);
-  const cartQuery = trpc.dmart.cart.get.useQuery(cartInput ?? { cartId: "placeholder-cart" }, {
+  const cartQuery = trpc.zunoApp.cart.get.useQuery(cartInput ?? { cartId: "placeholder-cart" }, {
     enabled: Boolean(cartInput),
     retry: 1,
   });
-  const addMutation = trpc.dmart.cart.addItem.useMutation();
-  const updateMutation = trpc.dmart.cart.updateItem.useMutation();
-  const clearMutation = trpc.dmart.cart.clear.useMutation();
+  const addMutation = trpc.zunoApp.cart.addItem.useMutation();
+  const updateMutation = trpc.zunoApp.cart.updateItem.useMutation();
+  const clearMutation = trpc.zunoApp.cart.clear.useMutation();
 
   useEffect(() => {
     try {
-      localStorage.setItem("dmart-wishlist", JSON.stringify(wishlist));
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
     } catch {
       // Wishlist still works for this session when storage is unavailable.
     }
@@ -56,7 +60,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (cartQuery.data === null) {
       setCart(null);
       setCartId(null);
-      localStorage.removeItem("dmart-cart-id");
+      localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
     } else if (cartQuery.data) {
       setCart(cartQuery.data);
     }
@@ -66,7 +71,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setCart(next);
     setCartId(next.id);
     try {
-      localStorage.setItem("dmart-cart-id", next.id);
+      localStorage.setItem(CART_STORAGE_KEY, next.id);
+      localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
     } catch {
       // Cart still works for this session when localStorage is unavailable.
     }
@@ -119,7 +125,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setCart(null);
     setCartId(null);
     try {
-      localStorage.removeItem("dmart-cart-id");
+      localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
     } catch {
       // Ignore storage cleanup failures.
     }

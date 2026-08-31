@@ -1,6 +1,6 @@
 import { Heart, ShoppingBag } from "lucide-react";
 import { Link } from "wouter";
-import type { ProductView } from "@shared/dmart";
+import type { ProductView } from "@shared/zunoApp";
 import { useStore } from "@/contexts/StoreContext";
 
 function money(value: number) {

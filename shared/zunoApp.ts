@@ -1,4 +1,4 @@
-export const DMART_CATEGORIES = [
+export const ZUNO_CATEGORIES = [
   "Groceries",
   "Fruits & Vegetables",
   "Dairy & Bakery",
@@ -11,7 +11,7 @@ export const DMART_CATEGORIES = [
   "Cleaning",
 ] as const;
 
-export type DmartCategory = (typeof DMART_CATEGORIES)[number];
+export type ZunoCategory = (typeof ZUNO_CATEGORIES)[number];
 
 export type ProductView = {
   id: number;

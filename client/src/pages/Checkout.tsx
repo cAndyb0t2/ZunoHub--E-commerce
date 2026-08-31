@@ -4,7 +4,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useStore } from "@/contexts/StoreContext";
 import { trpc } from "@/lib/trpc";
-import type { MockPaymentResult } from "@shared/dmart";
+import type { MockPaymentResult } from "@shared/zunoApp";
 
 const money = (value: number) => `₹${value.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
@@ -12,8 +12,8 @@ export default function Checkout() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { cart, cartId, resetCart } = useStore();
-  const placeMutation = trpc.dmart.checkout.place.useMutation();
-  const paymentMutation = trpc.dmart.payment.mockAuthorize.useMutation();
+  const placeMutation = trpc.zunoApp.checkout.place.useMutation();
+  const paymentMutation = trpc.zunoApp.payment.mockAuthorize.useMutation();
   const [coupon, setCoupon] = useState("");
   const [couponMessage, setCouponMessage] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");

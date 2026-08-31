@@ -1,20 +1,20 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { DMART_CATEGORIES } from "../../shared/dmart";
+import { ZUNO_CATEGORIES } from "../../shared/zunoApp";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { addCartItem, clearCart, getCart, setCartItemQuantity } from "./cart";
 import { getProductBySlug, listCatalog, updateProductAvailability } from "./catalog";
-import { listAllOrders, listCustomerOrders, placeOrder, updateOrderStatus } from "./orders";
+import { getOrderByNumber, listAllOrders, listCustomerOrders, placeOrder, updateOrderStatus } from "./orders";
 import { estimateDelivery } from "./delivery";
 import { authorizeMockPayment } from "./payments";
 
 const paymentMethod = z.enum(["cod", "upi", "card"]);
 const orderStatus = z.enum(["pending", "confirmed", "packed", "out_for_delivery", "delivered", "cancelled"]);
 
-export const dmartRouter = router({
+export const zunoAppRouter = router({
   catalog: router({
-    categories: publicProcedure.query(() => [...DMART_CATEGORIES]),
-    list: publicProcedure.input(z.object({ category: z.string().optional(), search: z.string().optional() }).optional()).query(({ input }) =>
+    categories: publicProcedure.query(() => [...ZUNO_CATEGORIES]),
+    list: publicProcedure.input(z.object({ category: z.string().optional(), search: z.string().optional(), priceMin: z.number().min(0).optional(), priceMax: z.number().min(0).optional() }).optional()).query(({ input }) =>
       listCatalog(input),
     ),
     bySlug: publicProcedure.input(z.object({ slug: z.string().min(1) })).query(async ({ input }) => {
@@ -59,6 +59,11 @@ export const dmartRouter = router({
   }),
   orders: router({
     mine: protectedProcedure.query(({ ctx }) => listCustomerOrders(ctx.user.id)),
+    byNumber: protectedProcedure.input(z.object({ orderNumber: z.string().min(6).max(40) })).query(async ({ ctx, input }) => {
+      const order = await getOrderByNumber(input.orderNumber, ctx.user.id);
+      if (!order) throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" });
+      return order;
+    }),
   }),
   admin: router({
     products: router({

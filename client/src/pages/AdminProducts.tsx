@@ -14,10 +14,10 @@ type Draft = { stock: string; price: string; active: boolean };
 export default function AdminProducts() {
   const { user, loading } = useAuth();
   const isAdmin = user?.role === "admin";
-  const productsQuery = trpc.dmart.catalog.list.useQuery({}, { enabled: isAdmin });
-  const ordersQuery = trpc.dmart.admin.orders.list.useQuery(undefined, { enabled: isAdmin });
-  const updateProduct = trpc.dmart.admin.products.update.useMutation();
-  const updateOrder = trpc.dmart.admin.orders.updateStatus.useMutation({ onSuccess: () => ordersQuery.refetch() });
+  const productsQuery = trpc.zunoApp.catalog.list.useQuery({}, { enabled: isAdmin });
+  const ordersQuery = trpc.zunoApp.admin.orders.list.useQuery(undefined, { enabled: isAdmin });
+  const updateProduct = trpc.zunoApp.admin.products.update.useMutation();
+  const updateOrder = trpc.zunoApp.admin.orders.updateStatus.useMutation({ onSuccess: () => ordersQuery.refetch() });
   const [drafts, setDrafts] = useState<Record<number, Draft>>({});
   const products = productsQuery.data ?? [];
   const draftFor = (id: number, stock: number, price: number, active: boolean) => drafts[id] ?? { stock: String(stock), price: String(price), active };

@@ -1,13 +1,13 @@
 import { ArrowRight, ChevronRight, Leaf, PackageCheck, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
-import { ProductCard, ProductSkeleton } from "@/components/dmart/ProductCard";
+import { ProductCard, ProductSkeleton } from "@/components/zunoApp/ProductCard";
 import { trpc } from "@/lib/trpc";
 
 const categoryIcons = ["◈", "✦", "○", "⌁", "✚", "◇", "▦", "✿", "⬡", "◌"];
 
 export default function Home() {
-  const productsQuery = trpc.dmart.catalog.list.useQuery({});
-  const categoriesQuery = trpc.dmart.catalog.categories.useQuery();
+  const productsQuery = trpc.zunoApp.catalog.list.useQuery({});
+  const categoriesQuery = trpc.zunoApp.catalog.categories.useQuery();
   const products = productsQuery.data ?? [];
   const categories = categoriesQuery.data ?? [];
 
@@ -20,7 +20,7 @@ export default function Home() {
         <Link className="primary" href="/products">Shop all products <ArrowRight size={17} aria-hidden="true" /></Link>
       </div>
       <div className="hero-art" aria-label="Up to 30 percent off on daily essentials">
-        <img src="/manus-storage/dmart-hero_f4a3b3ca.png" alt="" />
+        <img src="/manus-storag./zunoApp-hero_f4a3b3ca.png" alt="" />
         <span>UP TO</span><strong>30%</strong><small>OFF ON DAILY ESSENTIALS</small>
       </div>
     </section>

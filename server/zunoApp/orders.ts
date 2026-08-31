@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { cartItems, carts, orderItems, orders, products } from "../../drizzle/schema";
-import type { CheckoutInput, OrderStatus, OrderView } from "../../shared/dmart";
+import type { CheckoutInput, OrderStatus, OrderView } from "../../shared/zunoApp";
 import { getDb } from "../db";
 import { getCartRows } from "./cart";
 

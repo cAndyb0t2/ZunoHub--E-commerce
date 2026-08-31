@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { MockPaymentInput, MockPaymentResult } from "../../shared/dmart";
+import type { MockPaymentInput, MockPaymentResult } from "../../shared/zunoApp";
 
 export function authorizeMockPayment(input: MockPaymentInput): MockPaymentResult {
   if (input.method === "upi") {

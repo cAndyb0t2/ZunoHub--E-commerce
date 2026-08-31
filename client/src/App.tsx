@@ -5,7 +5,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import { StoreProvider } from "@/contexts/StoreContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { SiteFooter, SiteHeader } from "@/components/dmart/SiteChrome";
+import { SiteFooter, SiteHeader } from "@/components/zunoApp/SiteChrome";
 import Home from "@/pages/Home";
 import Products from "@/pages/Products";
 import ProductDetail from "@/pages/ProductDetail";
@@ -14,6 +14,7 @@ import Checkout from "@/pages/Checkout";
 import About from "@/pages/About";
 import Auth from "@/pages/Auth";
 import Orders from "@/pages/Orders";
+import OrderTracking from "@/pages/OrderTracking";
 import Confirmation from "@/pages/Confirmation";
 import AdminProducts from "@/pages/AdminProducts";
 import Wishlist from "@/pages/Wishlist";
@@ -27,6 +28,7 @@ function Router() {
     <Route path="/cart" component={Cart} />
     <Route path="/checkout" component={Checkout} />
     <Route path="/orders" component={Orders} />
+    <Route path="/orders/:orderNumber" component={OrderTracking} />
     <Route path="/wishlist" component={Wishlist} />
     <Route path="/order-confirmation" component={Confirmation} />
     <Route path="/login" component={() => <Auth />} />

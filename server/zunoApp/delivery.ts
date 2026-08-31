@@ -1,4 +1,4 @@
-import type { DeliveryEstimate } from "../../shared/dmart";
+import type { DeliveryEstimate } from "../../shared/zunoApp";
 
 function addBusinessDays(start: Date, days: number) {
   const result = new Date(start);

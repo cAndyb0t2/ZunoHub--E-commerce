@@ -10,13 +10,13 @@ const dateLabel = (value: number) => new Date(value).toLocaleDateString("en-IN",
 export default function ProductDetail() {
   const [location] = useLocation();
   const slug = location.split("/").pop() ?? "";
-  const productQuery = trpc.dmart.catalog.bySlug.useQuery({ slug }, { enabled: Boolean(slug) });
+  const productQuery = trpc.zunoApp.catalog.bySlug.useQuery({ slug }, { enabled: Boolean(slug) });
   const { addToCart, loading } = useStore();
   const [quantity, setQuantity] = useState(1);
   const [pincode, setPincode] = useState("");
   const [checkedPincode, setCheckedPincode] = useState("");
   const product = productQuery.data;
-  const deliveryQuery = trpc.dmart.delivery.estimate.useQuery({ pincode: checkedPincode }, { enabled: checkedPincode.length > 0, retry: false });
+  const deliveryQuery = trpc.zunoApp.delivery.estimate.useQuery({ pincode: checkedPincode }, { enabled: checkedPincode.length > 0, retry: false });
 
   if (productQuery.isLoading) return <main className="container page"><div className="detail-skeleton"><div className="skeleton detail-skeleton-image" /><div><div className="skeleton skeleton-line" /><div className="skeleton skeleton-line wide" /><div className="skeleton skeleton-line" /></div></div></main>;
   if (productQuery.isError || !product) return <main className="container page"><div className="empty"><span className="empty-mark">?</span><h1>Product not found</h1><p>This product may have been removed or is not available right now.</p><Link className="primary" href="/products">Back to the store</Link></div></main>;

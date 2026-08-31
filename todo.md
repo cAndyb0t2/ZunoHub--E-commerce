@@ -30,4 +30,12 @@
 - [x] Add tests and documentation for delivery estimates, mock payments, live cart behavior, and ZunoHub branding
 - [x] Re-run responsive verification and save an updated ZunoHub checkpoint
 - [x] Add regression coverage for live cart behavior, including server-synced total updates and/or slide-out cart panel interactions
-- [ ] Save a new checkpoint after the ZunoHub delivery checker, cart panel, mock payment, and rebrand changes, then mark the checkpoint task complete
+- [x] Save a new checkpoint after the ZunoHub delivery checker, cart panel, mock payment, and rebrand changes, then mark the checkpoint task complete
+- [x] Build a customer order-history and tracking page with current fulfilment progress
+- [x] Add search auto-suggestions and price-range/category filtering
+- [x] Refresh the ZunoHub theme color scheme while preserving contrast and accessibility
+- [x] Rename project-controlled `dmart` folders and references to `zunoApp` without breaking runtime paths
+- [x] Create and validate a reusable ZunoHub ecommerce workflow skill using the skill-creator process
+- [x] Run full tests, responsive visual checks, skill validation, and save an updated checkpoint
+- [x] Rename remaining project-controlled commerce namespace identifiers from `dmart`/`DMART` to `zunoApp`/`ZUNO` where safe, while preserving database table compatibility
+- [ ] Save a new checkpoint after the order tracking, search/filter, theme, folder, namespace, and skill changes
