@@ -1,0 +1,101 @@
+export const DMART_CATEGORIES = [
+  "Groceries",
+  "Fruits & Vegetables",
+  "Dairy & Bakery",
+  "Beverages",
+  "Snacks",
+  "Personal Care",
+  "Home Care",
+  "Baby Care",
+  "Kitchen",
+  "Cleaning",
+] as const;
+
+export type DmartCategory = (typeof DMART_CATEGORIES)[number];
+
+export type ProductView = {
+  id: number;
+  slug: string;
+  name: string;
+  category: string;
+  description: string;
+  unit: string;
+  brand: string;
+  image: string;
+  fallbackImage: string;
+  price: number;
+  originalPrice: number;
+  discount: number;
+  stock: number;
+  available: boolean;
+};
+
+export type CartItemView = {
+  id: number;
+  productId: number;
+  slug: string;
+  name: string;
+  unit: string;
+  image: string;
+  quantity: number;
+  stock: number;
+  price: number;
+  originalPrice: number;
+  lineTotal: number;
+};
+
+export type CartView = {
+  id: string;
+  items: CartItemView[];
+  itemCount: number;
+  subtotal: number;
+  discount: number;
+  delivery: number;
+  total: number;
+};
+
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "packed"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled";
+
+export type OrderItemView = {
+  productId: number;
+  name: string;
+  unit: string;
+  quantity: number;
+  price: number;
+  lineTotal: number;
+};
+
+export type OrderView = {
+  id: number;
+  orderNumber: string;
+  customerName: string;
+  phone: string;
+  address: string;
+  city: string;
+  pincode: string;
+  paymentMethod: "cod" | "upi" | "card";
+  subtotal: number;
+  discount: number;
+  delivery: number;
+  total: number;
+  status: OrderStatus;
+  createdAt: number;
+  items: OrderItemView[];
+};
+
+export type CheckoutInput = {
+  cartId: string;
+  customerName: string;
+  phone: string;
+  address: string;
+  city: string;
+  pincode: string;
+  paymentMethod: "cod" | "upi" | "card";
+  couponCode?: string;
+};

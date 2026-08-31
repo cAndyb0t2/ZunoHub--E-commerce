@@ -1,0 +1,13 @@
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Link } from "wouter";
+import { useStore } from "@/contexts/StoreContext";
+
+const money = (value: number) => `₹${value.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+
+export default function Cart() {
+  const { cart, itemCount, loading, updateQuantity } = useStore();
+  if (loading && !cart) return <main className="container page"><div className="page-heading"><span className="eyebrow">YOUR BAG</span><h1>Shopping cart</h1></div><div className="state-card"><div className="spinner" /> Loading your bag…</div></main>;
+  if (!cart?.items.length) return <main className="container page"><div className="empty cart-empty"><ShoppingBag size={34} aria-hidden="true" /><span className="eyebrow">YOUR BAG</span><h1>Your cart is waiting for something good.</h1><p>Pick up a few everyday essentials and they’ll show up here.</p><Link className="primary" href="/products">Start shopping <ArrowRight size={17} aria-hidden="true" /></Link></div></main>;
+
+  return <main className="container page"><div className="page-heading"><span className="eyebrow">YOUR BAG</span><h1>Shopping cart <small>{itemCount} {itemCount === 1 ? "item" : "items"}</small></h1></div><div className="cart-layout"><div className="cart-list">{cart.items.map(item => <div className="cart-item" key={item.id}><img src={item.image} alt="" /><div className="cart-item-copy"><p className="product-category">{item.unit}</p><h2>{item.name}</h2><b>{money(item.price)}</b><span className="cart-stock">{item.stock} available</span></div><div className="quantity"><button type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)} aria-label={`Decrease ${item.name}`}><Minus size={15} /></button><b aria-live="polite">{item.quantity}</b><button type="button" disabled={item.quantity >= item.stock} onClick={() => updateQuantity(item.id, item.quantity + 1)} aria-label={`Increase ${item.name}`}><Plus size={15} /></button></div><div className="cart-line-total"><b>{money(item.lineTotal)}</b><button type="button" className="remove" onClick={() => updateQuantity(item.id, 0)}><Trash2 size={14} aria-hidden="true" /> Remove</button></div></div>)}</div><aside className="summary"><h2>Order summary</h2><p>Items subtotal <b>{money(cart.subtotal)}</b></p><p>Discount <b className="green">− {money(cart.discount)}</b></p><p>Delivery <b>{cart.delivery ? money(cart.delivery) : "FREE"}</b></p><hr /><h3>Total <b>{money(cart.total)}</b></h3><Link className="primary full" href="/checkout">Proceed to checkout <ArrowRight size={17} aria-hidden="true" /></Link><small>Free delivery on orders above ₹499.</small></aside></div></main>;
+}
