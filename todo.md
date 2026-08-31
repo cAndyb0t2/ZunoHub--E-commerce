@@ -16,3 +16,10 @@
 - [x] Extend responsive behavior and verify the DMart storefront on desktop, tablet, large TV, and mobile phone viewports
 - [x] Add a clear end-to-end explanation of the frontend, separated backend, database, cart, checkout, authentication, and store operations flow
 - [x] Re-run validation and save an updated checkpoint for multi-device support
+- [x] Guarantee a distinct order ID for every successfully placed order, including collision-safe retry behavior
+- [x] Refine the customer-facing storefront and remove visible Manus branding without disrupting required runtime plumbing
+- [x] Add regression coverage and update the operating explanation for order IDs and branding
+- [x] Re-run validation and save a refined checkpoint
+- [x] Audit all project-controlled customer-facing UI text and rendered routes for remaining visible Manus watermark or branding, removing it where present and documenting platform-managed elements if any remain
+- [x] Add a regression test for duplicate order-number collision handling and retry behavior
+- [ ] Save a new checkpoint after the order-ID and branding refinements

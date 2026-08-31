@@ -18,6 +18,30 @@ function calculateCoupon(subtotalInPaise: number, deliveryInPaise: number, code?
   return { code: null, discount: 0 };
 }
 
+/** Public-facing ID: time-sortable, readable, and collision-resistant. The DB unique constraint is the final guard. */
+export function makeOrderNumber() {
+  const timePart = Date.now().toString(36).slice(-8).toUpperCase();
+  const randomPart = nanoid(8).toUpperCase().replace(/[^A-Z0-9]/g, "X");
+  return `DM${timePart}${randomPart}`;
+}
+
+function isDuplicateOrderNumberError(error: unknown) {
+  const candidate = error as { code?: string; message?: string };
+  return candidate.code === "ER_DUP_ENTRY" || candidate.message?.includes("orders_orderNumber_unique") === true;
+}
+
+/** Retry only the unique-ID collision case; all inventory, validation, and database errors still fail immediately. */
+export async function withUniqueOrderNumber<T>(create: (orderNumber: string) => Promise<T>) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      return await create(makeOrderNumber());
+    } catch (error) {
+      if (!isDuplicateOrderNumberError(error) || attempt === 4) throw error;
+    }
+  }
+  throw new Error("Unable to create a unique order ID. Please try again.");
+}
+
 function toOrderView(row: typeof orders.$inferSelect, items: typeof orderItems.$inferSelect[]): OrderView {
   return {
     id: row.id,
@@ -62,9 +86,8 @@ export async function placeOrder(input: CheckoutInput, userId?: number | null) {
   const deliveryInPaise = subtotalInPaise === 0 || subtotalInPaise >= 49900 ? 0 : 4000;
   const coupon = calculateCoupon(subtotalInPaise, deliveryInPaise, input.couponCode);
   const totalInPaise = subtotalInPaise - coupon.discount + deliveryInPaise;
-  const orderNumber = `DM${Date.now().toString().slice(-8)}${nanoid(4).toUpperCase()}`;
 
-  const order = await db.transaction(async tx => {
+  const order = await withUniqueOrderNumber(orderNumber => db.transaction(async tx => {
     for (const row of rows) {
       const stockUpdate = await tx.update(products)
         .set({ stock: sql`${products.stock} - ${row.item.quantity}`, updatedAt: new Date() })
@@ -104,7 +127,7 @@ export async function placeOrder(input: CheckoutInput, userId?: number | null) {
     await tx.delete(cartItems).where(eq(cartItems.cartId, input.cartId));
     const createdRows = await tx.select().from(orders).where(eq(orders.id, orderId)).limit(1);
     return createdRows[0];
-  });
+  }));
 
   const [result] = await hydrateOrders([order]);
   return result;

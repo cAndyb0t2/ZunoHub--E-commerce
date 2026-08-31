@@ -23,9 +23,9 @@ The catalog is seeded from the attached DMart product baseline the first time th
 
 The bag is persistent. When the customer adds an item, the server creates a cart ID and the browser stores only that ID in local storage. Every quantity change is sent back to the server, where the requested quantity is capped by current stock. The cart response contains recalculated subtotal, product savings, delivery fee, and total, which means the browser does not control the final price.
 
-Checkout collects delivery details and a payment preference. The final checkout procedure re-reads the cart, validates the coupon and address fields, checks every item’s current stock, decrements inventory inside one database transaction, creates an order snapshot, converts the cart, and removes its active lines. If any product cannot be supplied, the transaction fails instead of creating a partial order. The confirmation page receives the saved order number, and signed-in customers can later see the same order through `/orders`.
+Checkout collects delivery details and a payment preference. The final checkout procedure re-reads the cart, validates the coupon and address fields, checks every item’s current stock, decrements inventory inside one database transaction, creates an order snapshot, converts the cart, and removes its active lines. If any product cannot be supplied, the transaction fails instead of creating a partial order. Every order receives a new readable `DM...` order number; the database unique constraint is the final guard, and the service retries with a fresh token if a collision ever occurs. The confirmation page receives the saved order number, and signed-in customers can later see the same order through `/orders`.
 
-Authentication is optional for shopping. Guest customers can browse, keep a bag, and place an order. Manus authentication is used for private order history and the protected operations page. The operations page checks the signed-in user’s admin role on the server; hiding a button in the frontend is not used as the security boundary.
+Authentication is optional for shopping. Guest customers can browse, keep a bag, and place an order. The secure authentication integration is used for private order history and the protected operations page, while the customer-facing sign-in dialog uses neutral DMart wording. The operations page checks the signed-in user’s admin role on the server; hiding a button in the frontend is not used as the security boundary.
 
 The complete request flow is:
 
@@ -82,3 +82,5 @@ The checkout currently records the selected payment preference and deliberately 
 ## Notes for production operation
 
 The attached product image URLs are retained as the initial visual baseline and each product has a placeholder fallback. For production, replace those URLs with approved product photography managed through the project’s storage workflow. Do not add fabricated reviews, ratings, or testimonials. Keep prices and stock changes in the operations page, and use the database migration as the source of truth for the backend schema.
+
+The customer-facing routes and sign-in dialog contain no visible Manus watermark or vendor branding. A few internal authentication/session keys and runtime diagnostic asset paths retain infrastructure names; they are not rendered in the storefront and should not be removed because the secure sign-in and hosted runtime depend on them.
