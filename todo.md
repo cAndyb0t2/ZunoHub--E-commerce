@@ -12,4 +12,7 @@
 - [x] Add Vitest coverage for deterministic catalog and checkout rules
 - [x] Run type checking, tests, production build, API smoke validation, and desktop/mobile visual checks
 - [x] Add setup and operating instructions in `README.md`
-- [ ] Save the finished project checkpoint for delivery
+- [x] Save the finished project checkpoint for delivery
+- [x] Extend responsive behavior and verify the DMart storefront on desktop, tablet, large TV, and mobile phone viewports
+- [x] Add a clear end-to-end explanation of the frontend, separated backend, database, cart, checkout, authentication, and store operations flow
+- [x] Re-run validation and save an updated checkpoint for multi-device support

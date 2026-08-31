@@ -376,3 +376,35 @@ del { display: block; margin-top: 2px; color: #9aa79d; font-size: 11px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Tablet tuning: retain the two-column shopping composition while giving touch targets and filters more room. */
+@media (min-width: 721px) and (max-width: 1100px) {
+  .container { padding-left: 24px; padding-right: 24px; }
+  .header-inner { gap: 16px; }
+  .search-form { max-width: 390px; }
+  .hero { gap: 24px; min-height: 340px; }
+  .hero-copy { padding-left: 20px; }
+  .hero-art { margin-right: 22px; }
+  .category-grid { grid-template-columns: repeat(4, 1fr); }
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
+  .detail-layout { gap: 28px; }
+  .detail-image, .detail-image img { min-height: 420px; height: 420px; }
+  .detail-image img { padding: 32px; }
+  .cart-layout, .checkout-layout { grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr); gap: 22px; }
+}
+
+/* Large television and wide desktop tuning: use the extra canvas without making text or cards oversized. */
+@media (min-width: 1600px) {
+  .container { max-width: 1500px; padding-left: 48px; padding-right: 48px; }
+  .header-inner { min-height: 88px; }
+  .hero { min-height: 475px; padding-top: 78px; padding-bottom: 78px; gap: 80px; }
+  .hero-copy { padding-left: 72px; }
+  .hero-art { min-height: 350px; margin-right: 70px; }
+  .hero-art strong { font-size: 92px; }
+  .category-grid { grid-template-columns: repeat(10, 1fr); }
+  .product-grid { grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .product-image, .product-image img { min-height: 235px; height: 235px; }
+  .section { padding-top: 86px; }
+  .strip { margin-top: 86px; padding: 55px 70px; }
+  .page { padding-top: 75px; }
+}
