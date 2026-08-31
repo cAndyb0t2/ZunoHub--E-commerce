@@ -22,4 +22,12 @@
 - [x] Re-run validation and save a refined checkpoint
 - [x] Audit all project-controlled customer-facing UI text and rendered routes for remaining visible Manus watermark or branding, removing it where present and documenting platform-managed elements if any remain
 - [x] Add a regression test for duplicate order-number collision handling and retry behavior
-- [ ] Save a new checkpoint after the order-ID and branding refinements
+- [x] Save a new checkpoint after the order-ID and branding refinements
+- [x] Add product-page delivery pin-code validation and estimated delivery dates
+- [x] Add real-time server-synced cart price updates and a responsive slide-out cart panel
+- [x] Add clearly labeled mock UPI and card payment simulation for checkout testing
+- [x] Rebrand all customer-facing DMart text, metadata, and copy to ZunoHub
+- [x] Add tests and documentation for delivery estimates, mock payments, live cart behavior, and ZunoHub branding
+- [x] Re-run responsive verification and save an updated ZunoHub checkpoint
+- [x] Add regression coverage for live cart behavior, including server-synced total updates and/or slide-out cart panel interactions
+- [ ] Save a new checkpoint after the ZunoHub delivery checker, cart panel, mock payment, and rebrand changes, then mark the checkpoint task complete

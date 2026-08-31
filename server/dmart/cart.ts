@@ -18,6 +18,19 @@ async function ensureCart(cartId?: string, userId?: number | null) {
   return { db, id };
 }
 
+export function calculateCartTotals(items: Pick<CartView["items"][number], "quantity" | "price" | "originalPrice" | "lineTotal">[]) {
+  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const discount = items.reduce((sum, item) => sum + Math.max(0, item.originalPrice - item.price) * item.quantity, 0);
+  const delivery = subtotal === 0 || subtotal >= 499 ? 0 : 40;
+  return {
+    itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+    subtotal,
+    discount,
+    delivery,
+    total: subtotal - discount + delivery,
+  };
+}
+
 async function readCart(db: Db, cartId: string): Promise<CartView> {
   const rows = await db.select({ item: cartItems, product: products })
     .from(cartItems)
@@ -36,21 +49,8 @@ async function readCart(db: Db, cartId: string): Promise<CartView> {
     originalPrice: product.originalPriceInPaise / 100,
     lineTotal: (product.priceInPaise * item.quantity) / 100,
   }));
-  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
-  const discount = items.reduce(
-    (sum, item) => sum + Math.max(0, item.originalPrice - item.price) * item.quantity,
-    0,
-  );
-  const delivery = subtotal === 0 || subtotal >= 499 ? 0 : 40;
-  return {
-    id: cartId,
-    items,
-    itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
-    subtotal,
-    discount,
-    delivery,
-    total: subtotal - discount + delivery,
-  };
+  const totals = calculateCartTotals(items);
+  return { id: cartId, items, ...totals };
 }
 
 export async function getCart(cartId: string) {

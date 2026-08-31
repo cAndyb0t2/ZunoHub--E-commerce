@@ -99,3 +99,26 @@ export type CheckoutInput = {
   paymentMethod: "cod" | "upi" | "card";
   couponCode?: string;
 };
+
+export type DeliveryEstimate = {
+  pincode: string;
+  eligible: boolean;
+  minDate?: number;
+  maxDate?: number;
+  message: string;
+};
+
+export type MockPaymentResult = {
+  status: "success" | "failed";
+  transactionId?: string;
+  message: string;
+  method: "upi" | "card";
+};
+
+export type MockPaymentInput = {
+  method: "upi" | "card";
+  upiId?: string;
+  cardNumber?: string;
+  expiry?: string;
+  cvv?: string;
+};

@@ -99,7 +99,7 @@ export async function ensureCatalogSeeded() {
         category,
         description,
         unit,
-        brand: "DMart selection",
+        brand: "ZunoHub selection",
         imageUrl: imageMap[name] ?? fallbackFor(name),
         fallbackImageUrl: fallbackFor(name),
         priceInPaise: price * 100,

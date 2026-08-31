@@ -8,7 +8,7 @@ import { getCartRows } from "./cart";
 function calculateCoupon(subtotalInPaise: number, deliveryInPaise: number, code?: string) {
   const normalized = code?.trim().toUpperCase();
   const beforeCoupon = subtotalInPaise + deliveryInPaise;
-  if (normalized === "DMART10" && subtotalInPaise >= 39900) {
+  if ((normalized === "ZUNO10" || normalized === "DMART10") && subtotalInPaise >= 39900) {
     return { code: normalized, discount: Math.min(Math.round(beforeCoupon * 0.1), 15000) };
   }
   if (normalized === "SAVE50" && subtotalInPaise >= 59900) {

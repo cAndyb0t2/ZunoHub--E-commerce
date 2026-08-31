@@ -5,6 +5,8 @@ import { adminProcedure, protectedProcedure, publicProcedure, router } from "../
 import { addCartItem, clearCart, getCart, setCartItemQuantity } from "./cart";
 import { getProductBySlug, listCatalog, updateProductAvailability } from "./catalog";
 import { listAllOrders, listCustomerOrders, placeOrder, updateOrderStatus } from "./orders";
+import { estimateDelivery } from "./delivery";
+import { authorizeMockPayment } from "./payments";
 
 const paymentMethod = z.enum(["cod", "upi", "card"]);
 const orderStatus = z.enum(["pending", "confirmed", "packed", "out_for_delivery", "delivered", "cancelled"]);
@@ -20,6 +22,18 @@ export const dmartRouter = router({
       if (!product) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
       return product;
     }),
+  }),
+  delivery: router({
+    estimate: publicProcedure.input(z.object({ pincode: z.string() })).query(({ input }) => estimateDelivery(input.pincode)),
+  }),
+  payment: router({
+    mockAuthorize: publicProcedure.input(z.object({
+      method: z.enum(["upi", "card"]),
+      upiId: z.string().optional(),
+      cardNumber: z.string().optional(),
+      expiry: z.string().optional(),
+      cvv: z.string().optional(),
+    })).mutation(({ input }) => authorizeMockPayment(input)),
   }),
   cart: router({
     get: publicProcedure.input(z.object({ cartId: z.string().min(8) })).query(({ input }) => getCart(input.cartId)),

@@ -25,7 +25,7 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="trust-strip" aria-label="DMart benefits">
+    <section className="trust-strip" aria-label="ZunoHub benefits">
       <div><PackageCheck size={21} aria-hidden="true" /><span><b>Reliable delivery</b><small>Essentials to your door</small></span></div>
       <div><Leaf size={21} aria-hidden="true" /><span><b>Everyday freshness</b><small>Carefully selected products</small></span></div>
       <div><ShieldCheck size={21} aria-hidden="true" /><span><b>Simple checkout</b><small>No surprises at the end</small></span></div>
