@@ -18,6 +18,7 @@ import OrderTracking from "@/pages/OrderTracking";
 import Confirmation from "@/pages/Confirmation";
 import AdminProducts from "@/pages/AdminProducts";
 import Wishlist from "@/pages/Wishlist";
+import Profile from "@/pages/Profile";
 
 function Router() {
   return <Switch>
@@ -30,6 +31,7 @@ function Router() {
     <Route path="/orders" component={Orders} />
     <Route path="/orders/:orderNumber" component={OrderTracking} />
     <Route path="/wishlist" component={Wishlist} />
+    <Route path="/profile" component={Profile} />
     <Route path="/order-confirmation" component={Confirmation} />
     <Route path="/login" component={() => <Auth />} />
     <Route path="/signup" component={() => <Auth signup />} />

@@ -38,4 +38,12 @@
 - [x] Create and validate a reusable ZunoHub ecommerce workflow skill using the skill-creator process
 - [x] Run full tests, responsive visual checks, skill validation, and save an updated checkpoint
 - [x] Rename remaining project-controlled commerce namespace identifiers from `dmart`/`DMART` to `zunoApp`/`ZUNO` where safe, while preserving database table compatibility
-- [ ] Save a new checkpoint after the order tracking, search/filter, theme, folder, namespace, and skill changes
+- [x] Save a new checkpoint after the order tracking, search/filter, theme, folder, namespace, and skill changes
+- [x] Add a clean authenticated ZunoHub profile page using the existing session and logout action
+- [x] Make the login/account entry flow clear and accessible with the existing secure authentication integration
+- [x] Consolidate customer-facing links into one navigation bar across desktop, tablet, and mobile
+- [x] Add focused account tests, documentation, and responsive visual verification
+- [x] Save an updated lightweight profile and single-navigation checkpoint
+- [x] Add focused automated coverage for profile/login/account navigation behavior
+- [x] Visually verify the single navigation and profile/login flows at tablet width
+- [ ] Save a new checkpoint after the completed profile, login, and single-navigation changes

@@ -106,3 +106,9 @@ The visual theme uses a richer emerald primary, deep teal text, pale mint surfac
 The project-controlled feature folders are now named `client/src/components/zunoApp/`, `server/zunoApp/`, and `shared/zunoApp.ts`. The managed project root remains unchanged because it is controlled by the hosting workspace. Existing shoppers’ old `dmart-cart-id` and `dmart-wishlist` browser keys are read once as backward-compatible fallbacks, while new state is stored under `zunoApp` keys.
 
 The reusable agent workflow is packaged separately at `/home/ubuntu/skills/zunohub-ecommerce-workflow/SKILL.md` and has passed the skill structure validator.
+
+## Profile, login, and one navigation bar
+
+The `/profile` page uses the existing authenticated session from `useAuth()`. Signed-in shoppers see their display name, email when available, secure-account status, links to orders and shopping, and a sign-out action. Signed-out visitors see a short explanation and a secure sign-in button. The existing OAuth flow starts only from the button action, and the storefront does not collect passwords.
+
+The customer-facing header now uses one primary navigation bar. Brand, search, category links, account, location, and bag controls share the same responsive header instead of using a separate second navigation strip. On small screens, category links remain horizontally scrollable and account and bag controls use compact icon-first presentation.
