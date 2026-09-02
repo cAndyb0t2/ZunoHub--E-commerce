@@ -62,3 +62,6 @@
 - [x] Add automated coverage for profile update feedback behavior, including successful save and invalid-name/error paths
 - [x] Add regression coverage for the checkout mock-payment processing state/flow, including duplicate-submit prevention
 - [x] Re-run pnpm check, pnpm test, and pnpm build after adding the missing coverage
+- [x] Add more honest ZunoHub catalogue products with appropriate product imagery
+- [x] Integrate the new product image assets into the persistent catalogue and storefront
+- [x] Validate the expanded catalogue on desktop and mobile, then save a published checkpoint

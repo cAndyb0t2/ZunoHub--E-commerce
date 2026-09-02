@@ -26,6 +26,11 @@ const imageMap: Record<string, string> = {
   "Airtight Storage Containers": "https://m.media-amazon.com/images/I/71VQsyzN2KS.jpg",
   "Baby Wipes": "https://m.media-amazon.com/images/I/71sblnSN7fL.jpg",
   "Garbage Bags": "https://m.media-amazon.com/images/I/61fn1xtHO4L.jpg",
+  "Chana Dal": "/manus-storage/zunohub-chana-dal_8a6158cf.png",
+  "Coconut Water": "/manus-storage/zunohub-coconut-water_742e70af.png",
+  "Fresh Mint Toothpaste": "/manus-storage/zunohub-toothpaste_0705a5eb.png",
+  "Dish Sponges": "/manus-storage/zunohub-dish-sponges_a8543f83.png",
+  "Roasted Cashews": "/manus-storage/zunohub-cashews_cae45ecb.png",
 };
 
 export const catalogSeed = [
@@ -59,6 +64,11 @@ export const catalogSeed = [
   ["Masala Oats", "Snacks", "Savory oats with a warm spice blend", 119, 145, "400 g", 22],
   ["Toilet Cleaner", "Cleaning", "Fresh, effective cleaner for bathroom care", 99, 125, "500 ml", 19],
   ["Kitchen Tissue Roll", "Kitchen", "Absorbent tissue rolls for everyday cleanup", 129, 160, "4 rolls", 17],
+  ["Chana Dal", "Groceries", "Clean split chickpeas for hearty dals and snacks", 139, 170, "1 kg", 23],
+  ["Coconut Water", "Beverages", "Refreshing coconut water for a naturally light drink", 89, 110, "1 L", 20],
+  ["Fresh Mint Toothpaste", "Personal Care", "Fresh mint toothpaste for an everyday clean", 119, 145, "150 g", 27],
+  ["Dish Sponges", "Kitchen", "Absorbent scrub sponges for everyday dishwashing", 79, 99, "5 pieces", 32],
+  ["Roasted Cashews", "Snacks", "Crunchy roasted cashews for easy snacking", 249, 299, "200 g", 16],
 ] as const;
 
 const fallbackFor = (name: string) =>

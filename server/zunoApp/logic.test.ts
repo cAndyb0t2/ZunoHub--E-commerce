@@ -13,7 +13,7 @@ describe("DMart catalog helpers", () => {
 
   it("includes the expanded everyday assortment without duplicate slugs", () => {
     const names = catalogSeed.map(([name]) => name);
-    expect(names).toEqual(expect.arrayContaining(["Moong Dal", "Poha", "Plain Curd", "Masala Oats", "Kitchen Tissue Roll"]));
+    expect(names).toEqual(expect.arrayContaining(["Moong Dal", "Poha", "Plain Curd", "Masala Oats", "Kitchen Tissue Roll", "Chana Dal", "Coconut Water", "Fresh Mint Toothpaste", "Dish Sponges", "Roasted Cashews"]));
     expect(new Set(names.map(slugify)).size).toBe(names.length);
   });
 });
