@@ -1,5 +1,6 @@
 import { MapPin, Search, ShoppingBag, UserRound } from "lucide-react";
-import { FormEvent, useDeferredValue, useMemo, useState } from "react";
+import { FormEvent, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
 import { startLogin } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -7,6 +8,7 @@ import { useStore } from "@/contexts/StoreContext";
 import { CartPanel } from "@/components/zunoApp/CartPanel";
 import { trpc } from "@/lib/trpc";
 import { getAccountDestination, getAccountLabel } from "@shared/account";
+import { shouldShowWelcomeToast, welcomeToastKey } from "@shared/feedback";
 
 const navItems = [
   ["Shop all", "/products"],
@@ -20,13 +22,21 @@ const navItems = [
 export function SiteHeader() {
   const [, navigate] = useLocation();
   const { itemCount } = useStore();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const suggestionInput = useMemo(() => ({ search: deferredQuery.trim() }), [deferredQuery]);
   const suggestionsQuery = trpc.zunoApp.catalog.list.useQuery(suggestionInput, { enabled: searchFocused && suggestionInput.search.length >= 2 });
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.openId) return;
+    const welcomeKey = welcomeToastKey(user.openId);
+    if (!shouldShowWelcomeToast(isAuthenticated, user.openId, Boolean(sessionStorage.getItem(welcomeKey)))) return;
+    sessionStorage.setItem(welcomeKey, "1");
+    toast.success(`Welcome back, ${user.name?.split(" ")[0] || "shopper"}!`, { description: "Your account is ready." });
+  }, [isAuthenticated, user?.openId, user?.name]);
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -7,6 +7,7 @@ import { getProductBySlug, listCatalog, updateProductAvailability } from "./cata
 import { getOrderByNumber, listAllOrders, listCustomerOrders, placeOrder, updateOrderStatus } from "./orders";
 import { estimateDelivery } from "./delivery";
 import { authorizeMockPayment } from "./payments";
+import { updateUserProfile } from "../db";
 
 const paymentMethod = z.enum(["cod", "upi", "card"]);
 const orderStatus = z.enum(["pending", "confirmed", "packed", "out_for_delivery", "delivered", "cancelled"]);
@@ -56,6 +57,9 @@ export const zunoAppRouter = router({
       paymentMethod,
       couponCode: z.string().trim().max(32).optional(),
     })).mutation(({ ctx, input }) => placeOrder(input, ctx.user?.id)),
+  }),
+  profile: router({
+    update: protectedProcedure.input(z.object({ name: z.string().trim().min(2).max(160) })).mutation(({ ctx, input }) => updateUserProfile(ctx.user.id, input)),
   }),
   orders: router({
     mine: protectedProcedure.query(({ ctx }) => listCustomerOrders(ctx.user.id)),

@@ -28,7 +28,7 @@ const imageMap: Record<string, string> = {
   "Garbage Bags": "https://m.media-amazon.com/images/I/61fn1xtHO4L.jpg",
 };
 
-const catalogSeed = [
+export const catalogSeed = [
   ["Basmati Rice", "Groceries", "Long-grain basmati rice for everyday meals", 499, 599, "5 kg", 22],
   ["Whole Wheat Flour", "Groceries", "Freshly milled flour for rotis and breads", 245, 290, "5 kg", 17],
   ["Toor Dal", "Groceries", "Protein-rich split pigeon peas for dal", 169, 205, "1 kg", 19],
@@ -51,6 +51,14 @@ const catalogSeed = [
   ["Airtight Storage Containers", "Kitchen", "Airtight containers for pantry storage", 399, 499, "6 pieces", 14],
   ["Baby Wipes", "Baby Care", "Gentle fragrance-free wipes for everyday use", 149, 180, "80 wipes", 18],
   ["Garbage Bags", "Cleaning", "Strong leak-proof garbage bags for daily cleanup", 99, 125, "30 bags", 12],
+  ["Moong Dal", "Groceries", "Light, versatile lentils for everyday cooking", 145, 175, "1 kg", 21],
+  ["Poha", "Groceries", "Flattened rice for quick breakfasts and snacks", 72, 90, "1 kg", 26],
+  ["Green Peas", "Fruits & Vegetables", "Sweet frozen green peas for quick meals", 139, 165, "500 g", 20],
+  ["Plain Curd", "Dairy & Bakery", "Creamy plain curd for meals and snacks", 65, 80, "400 g", 24],
+  ["Orange Juice", "Beverages", "Bright citrus juice for a refreshing break", 109, 135, "1 L", 18],
+  ["Masala Oats", "Snacks", "Savory oats with a warm spice blend", 119, 145, "400 g", 22],
+  ["Toilet Cleaner", "Cleaning", "Fresh, effective cleaner for bathroom care", 99, 125, "500 ml", 19],
+  ["Kitchen Tissue Roll", "Kitchen", "Absorbent tissue rolls for everyday cleanup", 129, 160, "4 rolls", 17],
 ] as const;
 
 const fallbackFor = (name: string) =>
@@ -88,28 +96,21 @@ export function normalizeProduct(row: ProductRow): ProductView {
 export async function ensureCatalogSeeded() {
   const db = await getDb();
   if (!db) return;
-  const existing = await db.select({ id: products.id }).from(products).limit(1);
-  if (existing.length > 0) return;
+  const existing = await db.select({ slug: products.slug }).from(products);
+  const existingSlugs = new Set(existing.map(row => row.slug));
+  const missing = catalogSeed.filter(([name]) => !existingSlugs.has(slugify(name)));
+  if (!missing.length) return;
 
   try {
     await db.insert(products).values(
-      catalogSeed.map(([name, category, description, price, originalPrice, unit, stock]) => ({
-        slug: slugify(name),
-        name,
-        category,
-        description,
-        unit,
-        brand: "ZunoHub selection",
-        imageUrl: imageMap[name] ?? fallbackFor(name),
-        fallbackImageUrl: fallbackFor(name),
-        priceInPaise: price * 100,
-        originalPriceInPaise: originalPrice * 100,
-        stock,
-        active: true,
+      missing.map(([name, category, description, price, originalPrice, unit, stock]) => ({
+        slug: slugify(name), name, category, description, unit, brand: "ZunoHub selection",
+        imageUrl: imageMap[name] ?? fallbackFor(name), fallbackImageUrl: fallbackFor(name),
+        priceInPaise: price * 100, originalPriceInPaise: originalPrice * 100, stock, active: true,
       })),
     );
   } catch (error) {
-    // A concurrent first request may have inserted the catalog already.
+    // A concurrent request may have inserted the same missing rows already.
     if (!String(error).toLowerCase().includes("duplicate")) throw error;
   }
 }

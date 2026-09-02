@@ -112,3 +112,11 @@ The reusable agent workflow is packaged separately at `/home/ubuntu/skills/zunoh
 The `/profile` page uses the existing authenticated session from `useAuth()`. Signed-in shoppers see their display name, email when available, secure-account status, links to orders and shopping, and a sign-out action. Signed-out visitors see a short explanation and a secure sign-in button. The existing OAuth flow starts only from the button action, and the storefront does not collect passwords.
 
 The customer-facing header now uses one primary navigation bar. Brand, search, category links, account, location, and bag controls share the same responsive header instead of using a separate second navigation strip. On small screens, category links remain horizontally scrollable and account and bag controls use compact icon-first presentation.
+
+## Account feedback, catalog growth, and demo payments
+
+After a successful authenticated session becomes available, the storefront shows one welcome toast per browser session for that account. The profile page lets shoppers update their display name through a protected server mutation; successful saves show a confirmation toast, while invalid or failed saves show an error toast. Email remains supplied by the secure account connection rather than being edited as free-form checkout data.
+
+The catalog initializer now adds only missing ZunoHub products, so expanding the seed does not overwrite existing prices, stock, or operator changes. The assortment includes additional staples such as Moong Dal, Poha, Green Peas, Plain Curd, Orange Juice, Masala Oats, Toilet Cleaner, and Kitchen Tissue Roll.
+
+Mock UPI and card checkout now provide a short authorization state, input normalization for card groups and expiry dates, disabled duplicate submissions, explicit validation errors, and a simulated transaction result. These interactions are still testing-only: no real payment network is contacted, no card details are stored, and the demo credentials remain documented in the checkout guidance.

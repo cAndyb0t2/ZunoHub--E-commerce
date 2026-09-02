@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { slugify } from "./catalog";
+import { catalogSeed, slugify } from "./catalog";
 import { calculateCoupon, makeOrderNumber, withUniqueOrderNumber } from "./orders";
 import { estimateDelivery } from "./delivery";
 import { calculateCartTotals } from "./cart";
@@ -9,6 +9,12 @@ describe("DMart catalog helpers", () => {
   it("creates stable product slugs from attached catalogue names", () => {
     expect(slugify("Fruits & Vegetables")).toBe("fruits-vegetables");
     expect(slugify("Airtight Storage Containers")).toBe("airtight-storage-containers");
+  });
+
+  it("includes the expanded everyday assortment without duplicate slugs", () => {
+    const names = catalogSeed.map(([name]) => name);
+    expect(names).toEqual(expect.arrayContaining(["Moong Dal", "Poha", "Plain Curd", "Masala Oats", "Kitchen Tissue Roll"]));
+    expect(new Set(names.map(slugify)).size).toBe(names.length);
   });
 });
 
@@ -84,5 +90,31 @@ describe("ZunoHub live cart totals", () => {
     expect(calculateCartTotals([item])).toMatchObject({ itemCount: 1, subtotal: 250, discount: 50, delivery: 40, total: 240 });
     expect(calculateCartTotals([{ ...item, quantity: 2, lineTotal: 500 }])).toMatchObject({ itemCount: 2, subtotal: 500, discount: 100, delivery: 0, total: 400 });
     expect(calculateCartTotals([{ ...item, price: 275, lineTotal: 275 }])).toMatchObject({ subtotal: 275, discount: 25, delivery: 40, total: 290 });
+  });
+});
+
+
+describe("ZunoHub account feedback and payment inputs", () => {
+  it("shows the login welcome only once per account session", async () => {
+    const { shouldShowWelcomeToast, welcomeToastKey } = await import("../../shared/feedback");
+    expect(welcomeToastKey("user-1")).toBe("zunohub-welcomed-user-1");
+    expect(shouldShowWelcomeToast(true, "user-1", false)).toBe(true);
+    expect(shouldShowWelcomeToast(true, "user-1", true)).toBe(false);
+    expect(shouldShowWelcomeToast(false, "user-1", false)).toBe(false);
+  });
+
+  it("normalizes profile names and demo card fields", async () => {
+    const { normalizeProfileName, formatMockCardNumber, formatMockExpiry, profileUpdateFeedback, canStartMockPayment, mockPaymentButtonLabel } = await import("../../shared/feedback");
+    expect(normalizeProfileName("  Zuno Shopper  ")).toBe("Zuno Shopper");
+    expect(() => normalizeProfileName(" ")).toThrow("at least 2 characters");
+    expect(formatMockCardNumber("4242 4242 4242 4242")).toBe("4242 4242 4242 4242");
+    expect(formatMockExpiry("1230")).toBe("12/30");
+    expect(profileUpdateFeedback("success")).toEqual({ title: "Profile details updated", description: "Your ZunoHub account is up to date." });
+    expect(profileUpdateFeedback("error", "Name already used").title).toBe("Name already used");
+    expect(canStartMockPayment("upi", "idle")).toBe(true);
+    expect(canStartMockPayment("card", "processing")).toBe(false);
+    expect(canStartMockPayment("cod", "idle")).toBe(false);
+    expect(mockPaymentButtonLabel("processing", "card")).toBe("Authorising securely…");
+    expect(mockPaymentButtonLabel("idle", "upi")).toBe("Simulate UPI payment");
   });
 });

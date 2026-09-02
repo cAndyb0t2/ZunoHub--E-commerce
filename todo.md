@@ -46,4 +46,19 @@
 - [x] Save an updated lightweight profile and single-navigation checkpoint
 - [x] Add focused automated coverage for profile/login/account navigation behavior
 - [x] Visually verify the single navigation and profile/login flows at tablet width
-- [ ] Save a new checkpoint after the completed profile, login, and single-navigation changes
+- [x] Save a new checkpoint after the completed profile, login, and single-navigation changes
+- [x] Add a one-time welcome toast after a successful ZunoHub login
+- [x] Add editable profile details with success and error toast feedback after save
+- [x] Expand the catalog with additional honest product entries, prices, units, and stock
+- [x] Make mock UPI and card checkout interactions more realistic with formatting, validation, processing, and transaction states
+- [x] Add focused tests and documentation for toasts, profile updates, catalog expansion, and mock payments
+- [x] Run full validation and save an updated ZunoHub checkpoint
+- [x] Add focused automated coverage for profile-name validation and profile feedback behavior
+- [x] Add focused automated coverage for the one-time login welcome-toast decision
+- [x] Add regression coverage for mock payment formatting and processing input normalization
+- [x] Re-run full validation and save the updated ZunoHub checkpoint
+- [x] Fix profile detail form spacing and label presentation found during the final visual pass
+- [x] Re-run validation and save a final checkpoint after the profile toast and catalog/payment refinements
+- [x] Add automated coverage for profile update feedback behavior, including successful save and invalid-name/error paths
+- [x] Add regression coverage for the checkout mock-payment processing state/flow, including duplicate-submit prevention
+- [x] Re-run pnpm check, pnpm test, and pnpm build after adding the missing coverage
