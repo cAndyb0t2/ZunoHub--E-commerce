@@ -65,3 +65,11 @@
 - [x] Add more honest ZunoHub catalogue products with appropriate product imagery
 - [x] Integrate the new product image assets into the persistent catalogue and storefront
 - [x] Validate the expanded catalogue on desktop and mobile, then save a published checkpoint
+- [x] Add URL-backed catalogue sorting for popularity, newest arrivals, and discount percentage
+- [x] Add a prominent catalogue search bar with accessible submit and clear behavior
+- [x] Add nutrition facts, ingredients, and usage instructions to product detail pages
+- [x] Update and validate the reusable ZunoHub ecommerce workflow skill for the new catalogue/detail process
+- [x] Run full validation, responsive visual checks, and save the published update
+- [x] Add a dedicated clear action for the catalogue search bar and verify keyboard accessibility
+- [ ] Save a new published checkpoint after the sorting/search/detail/skill update
+- [ ] Mark the final validation-and-publish item complete after the new checkpoint succeeds

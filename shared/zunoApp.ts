@@ -13,6 +13,23 @@ export const ZUNO_CATEGORIES = [
 
 export type ZunoCategory = (typeof ZUNO_CATEGORIES)[number];
 
+export type CatalogSort = "featured" | "popular" | "newest" | "discount";
+
+export type NutritionFacts = {
+  servingSize: string;
+  energy: string;
+  protein: string;
+  carbohydrates: string;
+  fat: string;
+};
+
+export type ProductInformation = {
+  nutritionFacts: NutritionFacts;
+  ingredients: string[];
+  usageInstructions: string[];
+  informationNote: string;
+};
+
 export type ProductView = {
   id: number;
   slug: string;
@@ -28,6 +45,9 @@ export type ProductView = {
   discount: number;
   stock: number;
   available: boolean;
+  popularityScore: number;
+  createdAt: number;
+  information: ProductInformation;
 };
 
 export type CartItemView = {

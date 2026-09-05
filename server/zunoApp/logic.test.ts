@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogSeed, slugify } from "./catalog";
+import { catalogSeed, productInformation, slugify, sortCatalogProducts } from "./catalog";
 import { calculateCoupon, makeOrderNumber, withUniqueOrderNumber } from "./orders";
 import { estimateDelivery } from "./delivery";
 import { calculateCartTotals } from "./cart";
@@ -9,6 +9,27 @@ describe("DMart catalog helpers", () => {
   it("creates stable product slugs from attached catalogue names", () => {
     expect(slugify("Fruits & Vegetables")).toBe("fruits-vegetables");
     expect(slugify("Airtight Storage Containers")).toBe("airtight-storage-containers");
+  });
+
+  it("sorts products by popularity, newest arrival, and discount without mutating the source", () => {
+    const base = { category: "Snacks", description: "", unit: "1 pack", brand: "ZunoHub selection", image: "", fallbackImage: "", price: 0, originalPrice: 0, stock: 1, available: true, information: productInformation["Milk Chocolate"] };
+    const items = [
+      { ...base, id: 1, slug: "older", name: "Older", popularityScore: 20, createdAt: 100, discount: 5 },
+      { ...base, id: 2, slug: "popular", name: "Popular", popularityScore: 90, createdAt: 200, discount: 10 },
+      { ...base, id: 3, slug: "newest", name: "Newest", popularityScore: 40, createdAt: 300, discount: 30 },
+    ];
+    expect(sortCatalogProducts(items, "popular").map(item => item.name)).toEqual(["Popular", "Newest", "Older"]);
+    expect(sortCatalogProducts(items, "newest").map(item => item.name)).toEqual(["Newest", "Popular", "Older"]);
+    expect(sortCatalogProducts(items, "discount").map(item => item.name)).toEqual(["Newest", "Popular", "Older"]);
+    expect(items.map(item => item.name)).toEqual(["Older", "Popular", "Newest"]);
+  });
+
+  it("provides structured detail information for food and household products", () => {
+    expect(productInformation["Basmati Rice"].nutritionFacts.energy).toBe("356 kcal");
+    expect(productInformation["Basmati Rice"].ingredients).toContain("Basmati rice");
+    expect(productInformation["Basmati Rice"].usageInstructions.length).toBeGreaterThan(0);
+    expect(productInformation["Dish Sponges"].nutritionFacts.energy).toBe("Not applicable");
+    expect(productInformation["Dish Sponges"].usageInstructions).toContain("Rinse and air-dry after use.");
   });
 
   it("includes the expanded everyday assortment without duplicate slugs", () => {

@@ -1,6 +1,6 @@
 import { asc, eq, sql } from "drizzle-orm";
 import { products, type Product as ProductRow } from "../../drizzle/schema";
-import type { ProductView } from "../../shared/zunoApp";
+import type { CatalogSort, ProductInformation, ProductView } from "../../shared/zunoApp";
 import { getDb } from "../db";
 
 const imageMap: Record<string, string> = {
@@ -74,6 +74,78 @@ export const catalogSeed = [
 const fallbackFor = (name: string) =>
   `https://placehold.co/600x600/eaf5ee/007a33?text=${encodeURIComponent(name)}`;
 
+// Editorial merchandising priority for the "Popular" sort; this is not a rating or review.
+const popularityScores: Record<string, number> = {
+  "Basmati Rice": 98, "Full Cream Milk": 96, Bananas: 94, "Whole Wheat Flour": 92,
+  "Toor Dal": 90, "Sunflower Cooking Oil": 88, "Salted Potato Chips": 86,
+  "Daily Care Shampoo": 83, "Roasted Cashews": 81, "Coconut Water": 79,
+  "Airtight Storage Containers": 77, "Dishwash Gel": 74,
+};
+
+const foodInfo = (
+  servingSize: string,
+  energy: string,
+  protein: string,
+  carbohydrates: string,
+  fat: string,
+  ingredients: string[],
+  usageInstructions: string[],
+): ProductInformation => ({
+  nutritionFacts: { servingSize, energy, protein, carbohydrates, fat },
+  ingredients,
+  usageInstructions,
+  informationNote: "Nutrition values are typical reference values and may vary by pack or preparation.",
+});
+
+const generalInfo = (ingredients: string[], usageInstructions: string[]): ProductInformation => ({
+  nutritionFacts: { servingSize: "Not applicable", energy: "Not applicable", protein: "Not applicable", carbohydrates: "Not applicable", fat: "Not applicable" },
+  ingredients,
+  usageInstructions,
+  informationNote: "Always check the product label for the latest ingredient and usage information.",
+});
+
+export const productInformation: Record<string, ProductInformation> = {
+  "Basmati Rice": foodInfo("100 g uncooked", "356 kcal", "7.1 g", "79.8 g", "0.6 g", ["Basmati rice"], ["Rinse before cooking.", "Cook with water according to your preferred texture."]),
+  "Whole Wheat Flour": foodInfo("100 g", "340 kcal", "13.2 g", "72.6 g", "2.5 g", ["Whole wheat"], ["Use for rotis, breads, or baking.", "Store sealed in a cool, dry place."]),
+  "Toor Dal": foodInfo("100 g dry", "343 kcal", "22.3 g", "62.8 g", "1.7 g", ["Split pigeon peas"], ["Rinse and soak if desired.", "Pressure-cook or simmer until soft."]),
+  "Sunflower Cooking Oil": foodInfo("1 tbsp (15 ml)", "124 kcal", "0 g", "0 g", "14 g", ["Refined sunflower oil"], ["Use for sautéing, frying, or everyday cooking.", "Store away from direct sunlight."]),
+  "Full Cream Milk": foodInfo("100 ml", "61 kcal", "3.2 g", "4.8 g", "3.3 g", ["Pasteurised toned milk"], ["Refrigerate immediately.", "Use within the recommended period after opening."]),
+  "Paneer Cubes": foodInfo("100 g", "265 kcal", "18.3 g", "6.1 g", "20.8 g", ["Milk, acidity regulator"], ["Use in curries, grills, or salads.", "Keep refrigerated."]),
+  "Salted Butter": foodInfo("1 tbsp (14 g)", "100 kcal", "0.1 g", "0 g", "11.3 g", ["Cream, salt"], ["Spread or use for cooking and baking.", "Keep refrigerated after opening."]),
+  "Black Tea": foodInfo("200 ml brewed", "2 kcal", "0 g", "0.4 g", "0 g", ["Black tea leaves"], ["Steep in hot water for 3–5 minutes.", "Serve plain or with milk."]),
+  "Instant Coffee": foodInfo("1 cup prepared", "2 kcal", "0.3 g", "0.4 g", "0 g", ["Instant coffee"], ["Dissolve one teaspoon in hot water.", "Add milk or sugar to taste."]),
+  "Mixed Fruit Juice": foodInfo("100 ml", "48 kcal", "0.3 g", "11.2 g", "0.1 g", ["Fruit juice blend, water"], ["Shake well before serving.", "Refrigerate after opening."]),
+  "Salted Potato Chips": foodInfo("30 g", "160 kcal", "2 g", "16 g", "10 g", ["Potatoes, edible vegetable oil, salt"], ["Ready to eat.", "Reseal after opening for best crunch."]),
+  "Milk Chocolate": foodInfo("25 g", "135 kcal", "1.8 g", "15 g", "7.5 g", ["Sugar, milk solids, cocoa solids, cocoa butter"], ["Ready to eat.", "Store in a cool, dry place."]),
+  "Red Apples": foodInfo("100 g", "52 kcal", "0.3 g", "13.8 g", "0.2 g", ["Fresh apples"], ["Wash before eating.", "Enjoy fresh or slice into salads and desserts."]),
+  Bananas: foodInfo("100 g", "89 kcal", "1.1 g", "22.8 g", "0.3 g", ["Fresh bananas"], ["Peel before eating.", "Use in smoothies, breakfast bowls, or baking."]),
+  "Red Tomatoes": foodInfo("100 g", "18 kcal", "0.9 g", "3.9 g", "0.2 g", ["Fresh tomatoes"], ["Wash before use.", "Use in salads, sauces, or everyday cooking."]),
+  "Moong Dal": foodInfo("100 g dry", "347 kcal", "24 g", "63 g", "1.2 g", ["Split green gram"], ["Rinse before cooking.", "Simmer until soft for dal, khichdi, or soups."]),
+  Poha: foodInfo("100 g dry", "346 kcal", "7.5 g", "76 g", "1 g", ["Flattened rice"], ["Rinse briefly and drain.", "Cook with vegetables and seasoning for a quick breakfast."]),
+  "Green Peas": foodInfo("100 g", "81 kcal", "5.4 g", "14.5 g", "0.4 g", ["Green peas"], ["Cook before serving.", "Add to curries, rice, soups, or snacks."]),
+  "Plain Curd": foodInfo("100 g", "61 kcal", "3.5 g", "4.7 g", "3.3 g", ["Milk, active cultures"], ["Keep refrigerated.", "Serve chilled or use in raita and marinades."]),
+  "Orange Juice": foodInfo("100 ml", "45 kcal", "0.7 g", "10.4 g", "0.2 g", ["Orange juice"], ["Shake well before serving.", "Refrigerate after opening."]),
+  "Masala Oats": foodInfo("40 g serving", "150 kcal", "5 g", "25 g", "3.5 g", ["Oats, spices, vegetables, salt"], ["Add hot water and cook until soft.", "Serve immediately after preparation."]),
+  "Chana Dal": foodInfo("100 g dry", "360 kcal", "20.8 g", "60.7 g", "5.6 g", ["Split chickpeas"], ["Rinse and soak if desired.", "Cook until tender for dal, curries, or snacks."]),
+  "Coconut Water": foodInfo("100 ml", "19 kcal", "0.7 g", "3.7 g", "0.2 g", ["Coconut water"], ["Serve chilled.", "Refrigerate after opening and consume promptly."]),
+  "Roasted Cashews": foodInfo("30 g", "174 kcal", "5.1 g", "9.1 g", "13.9 g", ["Cashews, salt"], ["Ready to eat.", "Store sealed in a cool, dry place."]),
+  "Daily Care Shampoo": generalInfo(["Cleansing agents, conditioning agents, fragrance"], ["Apply to wet hair and massage gently.", "Rinse thoroughly and avoid contact with eyes."]),
+  "Moisturising Bath Soap": generalInfo(["Soap base, moisturising agents, fragrance"], ["Lather with water and rinse.", "For external use only."]),
+  "Laundry Detergent Powder": generalInfo(["Cleaning agents, builders, fragrance"], ["Follow the pack dosage for load size.", "Keep dry and away from children."]),
+  "Dishwash Gel": generalInfo(["Cleaning agents, water, fragrance"], ["Apply a small amount to a wet sponge.", "Rinse dishes thoroughly with clean water."]),
+  "Airtight Storage Containers": generalInfo(["Food-grade storage material"], ["Wash before first use.", "Use the lid firmly to seal dry goods."]),
+  "Baby Wipes": generalInfo(["Water, cleansing agents, moisturising agents"], ["Use on skin as needed.", "Close the pack after each use to retain moisture."]),
+  "Garbage Bags": generalInfo(["Polyethylene"], ["Place inside a suitable bin.", "Tie securely before disposal."]),
+  "Toilet Cleaner": generalInfo(["Cleaning agents, fragrance"], ["Apply under the rim and leave briefly.", "Brush and flush thoroughly; never mix with other cleaners."]),
+  "Kitchen Tissue Roll": generalInfo(["Paper tissue"], ["Tear off as needed for spills and surface cleaning.", "Dispose responsibly after use."]),
+  "Dish Sponges": generalInfo(["Foam sponge, abrasive fibre"], ["Use with dishwash liquid on wet surfaces.", "Rinse and air-dry after use."]),
+};
+
+const defaultInformation = (row: ProductRow): ProductInformation =>
+  row.category === "Groceries" || row.category === "Dairy & Bakery" || row.category === "Beverages" || row.category === "Snacks" || row.category === "Fruits & Vegetables"
+    ? foodInfo("100 g / 100 ml reference", "See pack", "See pack", "See pack", "See pack", [row.name], ["Prepare or consume according to the pack directions.", "Store as indicated on the product label."])
+    : generalInfo([row.name], ["Use according to the pack directions."]);
+
 export const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -100,6 +172,9 @@ export function normalizeProduct(row: ProductRow): ProductView {
     discount,
     stock: row.stock,
     available: row.active && row.stock > 0,
+    popularityScore: popularityScores[row.name] ?? 50,
+    createdAt: row.createdAt.getTime(),
+    information: productInformation[row.name] ?? defaultInformation(row),
   };
 }
 
@@ -125,7 +200,16 @@ export async function ensureCatalogSeeded() {
   }
 }
 
-export async function listCatalog(options?: { category?: string; search?: string; priceMin?: number; priceMax?: number }) {
+export function sortCatalogProducts(items: ProductView[], sort: CatalogSort = "featured") {
+  return [...items].sort((left, right) => {
+    if (sort === "popular") return right.popularityScore - left.popularityScore || left.name.localeCompare(right.name);
+    if (sort === "newest") return right.createdAt - left.createdAt || left.name.localeCompare(right.name);
+    if (sort === "discount") return right.discount - left.discount || left.name.localeCompare(right.name);
+    return left.name.localeCompare(right.name);
+  });
+}
+
+export async function listCatalog(options?: { category?: string; search?: string; priceMin?: number; priceMax?: number; sort?: CatalogSort }) {
   await ensureCatalogSeeded();
   const db = await getDb();
   if (!db) return [];
@@ -134,12 +218,14 @@ export async function listCatalog(options?: { category?: string; search?: string
   const search = options?.search?.trim().toLowerCase();
   const priceMin = options?.priceMin;
   const priceMax = options?.priceMax;
-  return rows
+  const sort = options?.sort ?? "featured";
+  const filtered = rows
     .filter(row => !category || category === "all" || row.category.toLowerCase() === category)
     .filter(row => !search || `${row.name} ${row.category} ${row.description} ${row.brand}`.toLowerCase().includes(search))
     .filter(row => priceMin === undefined || row.priceInPaise >= priceMin * 100)
     .filter(row => priceMax === undefined || row.priceInPaise <= priceMax * 100)
     .map(normalizeProduct);
+  return sortCatalogProducts(filtered, sort);
 }
 
 export async function getProductBySlug(slug: string) {

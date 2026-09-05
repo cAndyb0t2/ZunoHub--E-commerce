@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, Check, Minus, Plus, Search, ShoppingBag } from "lucide-react";
+import { ArrowLeft, CalendarDays, Check, CircleAlert, ListChecks, Minus, Plus, Search, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useStore } from "@/contexts/StoreContext";
@@ -36,5 +36,13 @@ export default function ProductDetail() {
         <form className="delivery-checker" onSubmit={checkDelivery}><label htmlFor="delivery-pincode"><CalendarDays size={17} aria-hidden="true" /> Check delivery to your pin code</label><div><input id="delivery-pincode" value={pincode} onChange={event => setPincode(event.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" pattern="[0-9]{6}" placeholder="Enter 6-digit pin code" aria-describedby="delivery-help" required /><button type="submit" className="secondary"><Search size={15} aria-hidden="true" /> Check</button></div><small id="delivery-help">Estimated dates are calculated for planning and may change with local availability.</small>{deliveryQuery.isFetching && <p className="delivery-result" role="status">Checking delivery availability…</p>}{deliveryQuery.data && !deliveryQuery.isFetching && <p className={`delivery-result ${deliveryQuery.data.eligible ? "available" : "unavailable"}`} role="status">{deliveryQuery.data.eligible && deliveryQuery.data.minDate && deliveryQuery.data.maxDate ? <>Delivery available. Estimated <strong>{dateLabel(deliveryQuery.data.minDate)} – {dateLabel(deliveryQuery.data.maxDate)}</strong> to {deliveryQuery.data.pincode}.</> : deliveryQuery.data.message}</p>}</form>
         <div className="detail-note"><strong>Easy everyday shopping</strong><span>Delivery fee is free above ₹499. Your final total is confirmed at checkout.</span></div></div>
     </div>
+    <section className="product-information" aria-labelledby="product-information-title">
+      <div className="product-information-heading"><span className="eyebrow">KNOW YOUR PICK</span><h2 id="product-information-title">Product information</h2><p>{product.information.informationNote}</p></div>
+      <div className="product-information-grid">
+        <article className="information-card nutrition-card"><div className="information-card-heading"><CircleAlert size={18} aria-hidden="true" /><h3>Nutrition facts</h3></div><p className="information-muted">Serving size: {product.information.nutritionFacts.servingSize}</p><dl className="nutrition-list"><div><dt>Energy</dt><dd>{product.information.nutritionFacts.energy}</dd></div><div><dt>Protein</dt><dd>{product.information.nutritionFacts.protein}</dd></div><div><dt>Carbohydrates</dt><dd>{product.information.nutritionFacts.carbohydrates}</dd></div><div><dt>Fat</dt><dd>{product.information.nutritionFacts.fat}</dd></div></dl></article>
+        <article className="information-card"><div className="information-card-heading"><CircleAlert size={18} aria-hidden="true" /><h3>Ingredients</h3></div><ul className="information-list">{product.information.ingredients.map(item => <li key={item}>{item}</li>)}</ul></article>
+        <article className="information-card"><div className="information-card-heading"><ListChecks size={18} aria-hidden="true" /><h3>How to use</h3></div><ol className="information-list">{product.information.usageInstructions.map(item => <li key={item}>{item}</li>)}</ol></article>
+      </div>
+    </section>
   </main>;
 }

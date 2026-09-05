@@ -15,7 +15,7 @@ const orderStatus = z.enum(["pending", "confirmed", "packed", "out_for_delivery"
 export const zunoAppRouter = router({
   catalog: router({
     categories: publicProcedure.query(() => [...ZUNO_CATEGORIES]),
-    list: publicProcedure.input(z.object({ category: z.string().optional(), search: z.string().optional(), priceMin: z.number().min(0).optional(), priceMax: z.number().min(0).optional() }).optional()).query(({ input }) =>
+    list: publicProcedure.input(z.object({ category: z.string().optional(), search: z.string().optional(), priceMin: z.number().min(0).optional(), priceMax: z.number().min(0).optional(), sort: z.enum(["featured", "popular", "newest", "discount"]).optional() }).optional()).query(({ input }) =>
       listCatalog(input),
     ),
     bySlug: publicProcedure.input(z.object({ slug: z.string().min(1) })).query(async ({ input }) => {
